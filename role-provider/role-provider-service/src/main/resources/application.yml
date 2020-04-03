@@ -1,0 +1,43 @@
+# 是否打开 undertow 日志，默认为 false
+server:
+  undertow:
+    accesslog:
+      enabled: false
+      dir: logs   # 设置访问日志所在目录
+      # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+      # 每块buffer的空间大小,越小的空间被利用越充分，不要设置太大，以免影响其他应用，合适即可
+    buffer-size: 1024
+    io-threads: 2   # 指定工作者线程的 I/0 线程数，默认为 2 或者 CPU 的个数
+    worker-threads: 8 # 指定工作者线程个数，默认为 I/O 线程个数的 8 倍
+    #max-http-post-size: 0  # 设置 HTTP POST 内容的最大长度，默认不做限制
+  port: 9090
+  servlet:
+    context-path: /role-service
+spring:
+  application:
+    name: role-service
+  cloud:
+    consul:
+      host: localhost
+      port: 8500
+      discovery:
+        prefer-ip-address: true
+        health-check-interval: 10s
+        instance-id: role-service
+        health-check-path: /role-service/actuator/health
+
+  jackson:
+    serialization:
+      indent_output: true
+management:
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    shutdown:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
